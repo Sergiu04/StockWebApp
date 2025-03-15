@@ -1,0 +1,43 @@
+.report-page {
+    background: linear-gradient(to right, #132e85, #210279); /* Dark gradient */
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .reports-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+  }
+  
+  .report-card {
+    background: #1e1e1e;
+    color: #f1f1f1;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
+  
+  .report-card button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .report-card button:hover {
+    background: #0056b3;
+  }
+  
+  .graph-container {
+    background: #222222;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+  

@@ -1,0 +1,101 @@
+.portfolio-page {
+    background: linear-gradient(135deg, #eef2f3, #8e9eab);
+    color: #333;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.portfolio-page h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #444;
+}
+
+.constraints {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+.constraint-field {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.constraints label {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.constraints input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.constraints button {
+    background: #6d83f2;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-right: 10px;
+}
+
+.constraints button:hover {
+    background: #4e6aff;
+}
+
+.portfolio-table {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+}
+
+.portfolio-table h3 {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.portfolio-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.portfolio-table th,
+.portfolio-table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.portfolio-table th {
+    background: #4e6aff;
+    color: white;
+}
+
+.portfolio-table tr:hover {
+    background: #f1f1f1;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    margin-bottom: 15px;
+}

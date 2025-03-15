@@ -1,0 +1,139 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #a2d2ff, #4a69bd);
+    font-family: 'Arial', sans-serif;
+}
+
+.login-form {
+    background-color: #ffffff;
+    padding: 25px 35px;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2d3436;
+    margin-bottom: 20px;
+}
+
+.success-message {
+    color: #27ae60;
+    background-color: #eafaf1;
+    padding: 15px;
+    border: 1px solid #27ae60;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+.error-message {
+    color: #d63031;
+    background-color: #fce4e4;
+    padding: 15px;
+    border: 1px solid #d63031;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-label {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #2d3436;
+    margin-bottom: 8px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #b2bec3;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #2d3436;
+    background-color: #f8f9fa;
+    transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+    border-color: #4a69bd;
+    outline: none;
+}
+
+.button.login {
+    width: 100%;
+    padding: 12px 25px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #4a69bd;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button.login:hover {
+    background-color: #6a89cc;
+    transform: translateY(-3px);
+}
+
+.button.login:active {
+    transform: translateY(0);
+}
+
+.form-footer {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.recover-link {
+    color: #4a69bd;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.recover-link:hover {
+    text-decoration: underline;
+    color: #6a89cc;
+}
+
+.home-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.button.home {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #4a69bd;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button.home:hover {
+    background-color: #6a89cc;
+    transform: translateY(-3px);
+}
+
+.button.home:active {
+    transform: translateY(0);
+}

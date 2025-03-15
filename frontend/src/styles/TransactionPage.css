@@ -1,0 +1,150 @@
+/* General page styling */
+.transaction-page {
+    background: linear-gradient(to bottom, #2c3e50, #34495e);
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Page header */
+  .transaction-page h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ecf0f1;
+  }
+  
+  /* Filters container */
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    background: #3c4f5c;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Individual filter label */
+  .filters label {
+    display: flex;
+    flex-direction: column;
+    color: #ecf0f1;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  
+  /* Inputs and dropdowns in filters */
+  .filters input,
+  .filters select {
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #7f8c8d;
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-size: 1rem;
+    outline: none;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .filters input:focus,
+  .filters select:focus {
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.8);
+  }
+  
+  /* Apply filters button */
+  .filters button {
+    padding: 12px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .filters button:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
+  }
+  
+  /* Table styling */
+  .transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #3c4f5c;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Table headers */
+  .transaction-table th {
+    background-color: #2980b9;
+    color: #ecf0f1;
+    font-size: 1.2rem;
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+  }
+  
+  /* Table rows */
+  .transaction-table td {
+    padding: 12px;
+    color: #ecf0f1;
+    font-size: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #2c3e50;
+  }
+  
+  /* Alternate row styling */
+  .transaction-table tr:nth-child(even) {
+    background-color: #2c3e50;
+  }
+  
+  .transaction-table tr:hover {
+    background-color: #1c2833;
+  }
+  
+  /* Profit/Loss column specific styling */
+  .transaction-table td:nth-child(6) {
+    font-weight: bold;
+  }
+  
+  /* Green for positive profit, red for negative */
+  .transaction-table td:nth-child(6)[style*="green"] {
+    color: #2ecc71;
+  }
+  
+  .transaction-table td:nth-child(6)[style*="red"] {
+    color: #e74c3c;
+  }
+  
+  /* Responsive styling for mobile devices */
+  @media (max-width: 768px) {
+    .filters {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .filters label,
+    .filters button {
+      width: 100%;
+    }
+  
+    .transaction-table {
+      font-size: 0.9rem;
+    }
+  
+    .transaction-page h1 {
+      font-size: 2rem;
+    }
+  }
+  

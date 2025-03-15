@@ -1,0 +1,98 @@
+.profile-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: linear-gradient(135deg, #6d83f2, #a1c4fd);
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background: #4e6aff;
+    color: white;
+  }
+  
+  .header h1 {
+    margin: 0;
+  }
+  
+  .logout-btn {
+    background: #ff4d4d;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .content {
+    display: flex;
+    flex-grow: 1;
+    height: 100%; /* Added */
+}
+  
+  .sidebar {
+    background: #3b5998;
+    padding: 20px;
+    min-width: 200px;
+  }
+  
+  .sidebar button {
+    background: transparent;
+    border: none;
+    color: white;
+    margin: 10px 0;
+    cursor: pointer;
+    text-align: left;
+  }
+  
+  .main-content {
+    flex-grow: 1;
+    padding: 20px;
+    height: 100%; /* Added to ensure it fits the parent */
+    overflow-y: auto; /* Prevent content overflow */
+  }
+  .sidebar {
+    background: #3b5998;
+    padding: 20px;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between buttons */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar button {
+    background: linear-gradient(135deg, #6d83f2, #a1c4fd);
+    border: none;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.sidebar button:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(135deg, #4e6aff, #728cff);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar button:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar button.active {
+    background: linear-gradient(135deg, #ff8a65, #ff5252);
+    color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}

@@ -1,0 +1,112 @@
+/* Container */
+.register-container {
+    background: linear-gradient(to bottom right, #dde2ff, #5865f2);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Home Button */
+  .home-button {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+  
+  .button.home {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid white;
+    color: white;
+    background-color: transparent;
+    border-radius: 9999px;
+    cursor: pointer;
+  }
+  
+  /* Register Form */
+  .register-form {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    text-align: center;
+  }
+  
+  .form-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .form-group {
+    margin-bottom: 16px;
+    text-align: left;
+  }
+  
+  .form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #555;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  
+  
+  /* Register Button */
+  .button.register {
+    width: 100%;
+    padding: 12px;
+    background-color: #5865f2;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  /* Footer Login Link */
+  .form-footer {
+    margin-top: 16px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .login-link {
+    color: #5865f2;
+    text-decoration: underline;
+  }
+
+  .response-message {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.response-message.success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.response-message.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+  
