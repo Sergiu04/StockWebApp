@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/RegisterPage.css';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [responseMessage, setResponseMessage] = useState(null);
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,6 +27,9 @@ const RegisterPage = () => {
         // Handle response status
         if (response.ok) {
             setResponseMessage({ type: 'success', text: data.message || 'Registration successful!' });
+            setTimeout(() => {
+              navigate('/login');
+            }, 1000);
         } else {
             setResponseMessage({ type: 'error', text: data.error || 'Registration failed. Please try again.' });
         }

@@ -9,23 +9,23 @@
     color: #fdfdfd;
     padding: 40px;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  }
+}
   
-  /* Page Title */
-  .market-data-page h1 {
+/* Page Title */
+.market-data-page h1 {
     font-size: 3.2rem;
     margin-bottom: 30px;
     text-shadow: 2px 2px 4px #000;
-  }
+}
   
-  /* Search bar container */
-  .search-bar {
+/* Search bar container */
+.search-bar {
     margin-bottom: 25px;
     width: 100%;
     max-width: 500px;
-  }
+}
   
-  .search-bar input {
+.search-bar input {
     width: 100%;
     padding: 16px;
     font-size: 1.2rem;
@@ -35,10 +35,10 @@
     background-color: #444;
     color: #fff;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-  }
+}
   
-  /* Stock list grid */
-  .stock-list {
+/* Stock list grid */
+.stock-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -46,10 +46,10 @@
     width: 100%;
     max-width: 1400px;
     margin-bottom: 40px;
-  }
+}
   
-  /* Individual stock item cards */
-  .stock-item {
+/* Individual stock item cards */
+.stock-item {
     background: #555;
     padding: 20px;
     border-radius: 12px;
@@ -58,27 +58,27 @@
     transition: transform 0.2s ease, background 0.3s ease;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  }
+}
   
-  .stock-item:hover,
-  .stock-item.selected {
+.stock-item:hover,
+.stock-item.selected {
     background: #ff6347;
     transform: translateY(-3px);
-  }
+}
   
-  /* Stock item text */
-  .stock-item h2 {
+/* Stock item text */
+.stock-item h2 {
     margin-bottom: 10px;
     font-size: 1.7rem;
-  }
+}
   
-  .stock-item p {
+.stock-item p {
     margin: 8px 0;
     font-size: 1.1rem;
-  }
+}
   
-  /* Stock details panel */
-  .stock-details {
+/* Stock details panel */
+.stock-details {
     background: #383838;
     margin-top: 30px;
     padding: 30px;
@@ -86,34 +86,34 @@
     width: 90%;
     max-width: 800px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  }
+}
   
-  .stock-details h2 {
+.stock-details h2 {
     margin-top: 0;
     margin-bottom: 20px;
     font-size: 2rem;
     text-align: center;
-  }
+}
   
-  /* Risk info container */
-  .risk-info {
+/* Risk info container */
+.risk-info {
     background: #4f4f4f;
     padding: 25px;
     margin-top: 20px;
     border-radius: 8px;
     color: #fff;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-  }
+}
   
-  .risk-info h3 {
+.risk-info h3 {
     margin-top: 0;
     margin-bottom: 15px;
     font-size: 1.6rem;
     text-align: center;
-  }
+}
   
-  /* For multi-line risk explanation */
-  .risk-info pre {
+/* For multi-line risk explanation */
+.risk-info pre {
     background-color: #3f3f3f;
     color: #f0f0f0;
     padding: 20px;
@@ -122,22 +122,22 @@
     font-size: 1.2rem;
     line-height: 1.6;
     margin: 0;
-  }
+}
   
-  /* Purchase section styling */
-  .purchase-section {
+/* Purchase section styling */
+.purchase-section {
     margin-top: 30px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-  }
+}
   
-  .purchase-section h3 {
+.purchase-section h3 {
     font-size: 1.4rem;
     margin-bottom: 15px;
-  }
+}
   
-  .purchase-section input {
+.purchase-section input {
     padding: 12px;
     margin-bottom: 15px;
     width: 180px;
@@ -147,9 +147,9 @@
     color: #fff;
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
     font-size: 1.1rem;
-  }
+}
   
-  .purchase-section button {
+.purchase-section button {
     padding: 14px 30px;
     background: #ff6347;
     border: none;
@@ -160,27 +160,61 @@
     font-size: 1.1rem;
     font-weight: bold;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-  }
+}
   
-  .purchase-section button:hover {
+.purchase-section button:hover {
     background: #e5533d;
     transform: translateY(-2px);
-  }
+}
   
-  .purchase-message {
+.purchase-message {
     margin-top: 15px;
     font-weight: bold;
     color: #ffdd57;
     font-size: 1.2rem;
-  }
+}
   
-  /* Error message styling */
-  .error {
+/* Error message styling */
+.error {
     color: #ff6347;
     font-weight: bold;
     margin-top: 25px;
     font-size: 1.2rem;
     text-shadow: 1px 1px 2px #000;
     text-align: center;
-  }
-  
+}
+
+/* New styles for enlarged buttons */
+.big-button {
+    padding: 16px 32px;
+    font-size: 1.3rem;
+    background: #ff4500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    color: white;
+    margin-top: 10px;
+}
+.big-button:hover {
+    transform: translateY(-3px);
+}
+
+/* Style for the forecast button (if different from purchase button) */
+.forecast-button {
+    padding: 14px 30px;
+    background: #4caf50;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    margin-right: 10px;
+}
+.forecast-button:hover {
+    background: #43a047;
+    transform: translateY(-2px);
+}

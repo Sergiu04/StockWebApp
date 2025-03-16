@@ -1,11 +1,11 @@
 import os
-from datetime import timedelta, datetime
+from datetime import datetime, timezone, timedelta
 from flask import Blueprint, Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
-
+import requests
 from modelAI import api
 
 app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
@@ -21,8 +21,8 @@ mongo = PyMongo(app)
 # Exract the stocks on startup from kaggle
 # Create db witht hese
 #--------------------------------------------------------
-from market_data_extraction import update_stock_data
-update_stock_data()
+#from market_data_extraction import update_stock_data
+#update_stock_data()
 
 # Include the endpoints from modelAI
 app.register_blueprint(api.bp, url_prefix="/api/model")
@@ -31,8 +31,10 @@ app.register_blueprint(api.bp, url_prefix="/api/model")
 app.secret_key = 'SECRET_KEY'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 # For cross-origin cookies, you may need to adjust these:
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"  # or "None" if using HTTPS
 # app.config["SESSION_COOKIE_SECURE"] = True  # if using HTTPS
+app.config["SESSION_COOKIE_SAMESITE"] = "None"  # for cross-domain
+app.config["SESSION_COOKIE_SECURE"] = False     # or True if using HTTPS
+
 
 # MarketDataPage:
 # ---------------------------
@@ -69,17 +71,6 @@ def risk_assessment():
 # ---------------------------
 @app.route('/api/purchase', methods=['POST'])
 def purchase():
-    """
-    Simulates the purchase of a stock. It requires the following JSON payload:
-      {
-        "ticker": <string>,
-        "quantity": <number>,
-        "price": <number>,
-        "confirm": <boolean>  // Optional; if omitted or false, returns risk details
-      }
-    If confirm is not provided or false, the API returns the stock’s risk assessment (fetched from the DB)
-    along with the current price so the frontend can prompt the user. If confirm is true, the purchase is processed.
-    """
     if "user_id" not in session:
         return jsonify({"error": "Not logged in"}), 401
 
@@ -92,12 +83,15 @@ def purchase():
     if not ticker or not quantity or not price:
         return jsonify({"error": "Missing purchase information (ticker, quantity, or price)."}), 400
 
-    # Retrieve risk info from stocks collection (mandatory)
-    stock_record = mongo.db.stocks.find_one({"Ticker": ticker}, {"_id": 0, "risk": 1, "risk_explanation": 1, "Close": 1})
+    # Retrieve risk info from stocks collection
+    stock_record = mongo.db.stocks.find_one(
+        {"Ticker": ticker},
+        {"_id": 0, "risk": 1, "risk_explanation": 1, "Close": 1}
+    )
     if not stock_record:
         return jsonify({"error": "Stock data not found."}), 404
 
-    # If purchase not confirmed, return risk assessment information for the client to display
+    # If purchase is not confirmed, return risk assessment details for review
     if not confirm:
         return jsonify({
             "message": "Risk assessment required before purchase.",
@@ -110,7 +104,7 @@ def purchase():
     # Retrieve user account
     user = mongo.db.users.find_one({"_id": ObjectId(session["user_id"])})
     if not user:
-        return jsonify({"error": "User not found."}), 404
+        return jsonify({"error": "User not found"}), 404
 
     budget = user.get("balance", 0)
     total_cost = quantity * price
@@ -118,29 +112,59 @@ def purchase():
         return jsonify({"error": "Insufficient funds."}), 400
 
     # Deduct purchase cost from user's balance
-    new_balance = budget - total_cost
-    mongo.db.users.update_one({"_id": ObjectId(session["user_id"])}, {"$set": {"balance": new_balance}})
-    
-    # Record the transaction in the transactions collection
+    new_balance = round(budget - total_cost, 2)  # Round to 2 decimals
+    mongo.db.users.update_one(
+        {"_id": ObjectId(session["user_id"])},
+        {"$set": {"balance": new_balance}}
+    )
+
+    # Insert transaction with additional fields
     transaction = {
         "user_id": ObjectId(session["user_id"]),
         "ticker": ticker,
         "quantity": quantity,
-        "price": price,
+        "purchasePrice": price,
+        "totalPrice": total_cost,
+        "transaction_type": "buy",
         "risk_assessment": stock_record.get("risk_explanation"),
-        "timestamp": datetime.datetime.utcnow()
+        "timestamp": datetime.now(timezone.utc)
     }
-    mongo.db.transactions.insert_one(transaction)
-    
+    result = mongo.db.transactions.insert_one(transaction)
+
+    # Convert non-serializable fields for JSON response
+    transaction["_id"] = str(result.inserted_id)
+    transaction["user_id"] = str(transaction["user_id"])
+    transaction["timestamp"] = transaction["timestamp"].isoformat()
+
+    # Update portfolio collection: update if exists, otherwise insert new document
+    portfolio = mongo.db.portfolios.find_one({
+        "user_id": ObjectId(session["user_id"]),
+        "ticker": ticker
+    })
+    if portfolio:
+        old_quantity = portfolio.get("quantity", 0)
+        old_avg = portfolio.get("average_cost", 0)
+        new_quantity = old_quantity + quantity
+        new_avg = ((old_avg * old_quantity) + (price * quantity)) / new_quantity if new_quantity > 0 else price
+        mongo.db.portfolios.update_one(
+            {"_id": portfolio["_id"]},
+            {"$set": {"quantity": new_quantity, "average_cost": new_avg}}
+        )
+    else:
+        portfolio_doc = {
+            "user_id": ObjectId(session["user_id"]),
+            "ticker": ticker,
+            "quantity": quantity,
+            "average_cost": price,
+            "created_at": datetime.now(timezone.utc)
+        }
+        mongo.db.portfolios.insert_one(portfolio_doc)
+
     return jsonify({
         "message": "Purchase simulated successfully.",
         "new_balance": new_balance,
-        "ticker": ticker,
-        "quantity": quantity,
-        "price": price,
-        "risk_assessment": stock_record.get("risk_explanation")
+        "transaction": transaction
     }), 200
-
 
 
 # ---------------------------
@@ -148,6 +172,7 @@ def purchase():
 # ---------------------------
 @app.route('/api/register', methods=['POST'])
 def register():
+    session.clear()  # Clear any existing session data
     data = request.get_json()
     username = data.get("username")
     email = data.get("email")
@@ -166,16 +191,19 @@ def register():
         "balance": 0.0,
         "subscriptionStatus": False,
         "notificationPreferences": {"email": False, "sms": False},
-        "created_at": datetime.now()
+        "created_at": datetime.now(timezone.utc)
     }
     result = mongo.db.users.insert_one(user)
     session["user_id"] = str(result.inserted_id)
     session["username"] = username
-    return jsonify({"message": "Registration successful"}), 201
+    print(result)
+    return jsonify({"message": "Registration successful"}), 200
 
 @app.route('/api/login', methods=['POST'])
 def login():
+    session.clear()  # Clear any existing session data
     data = request.get_json()
+    print(data)
     email = data.get("email")
     password = data.get("password")
     if not email or not password:
@@ -187,6 +215,8 @@ def login():
 
     session["user_id"] = str(user["_id"])
     session["username"] = user["username"]
+    print(session["username"])
+    print(user["_id"])
     return jsonify({"message": "Login successful", "user": {"username": user["username"], "email": user["email"]}})
 
 @app.route('/api/logout', methods=['POST'])
@@ -199,10 +229,17 @@ def profile():
     if "user_id" not in session:
         return jsonify({"error": "Not logged in"}), 401
     user = mongo.db.users.find_one({"_id": ObjectId(session["user_id"])}, {"password": 0})
+    print(user)
     if not user:
         return jsonify({"error": "User not found"}), 404
+    # Update the session with the latest username from the database
+    session["username"] = user.get("username", "User")
     user["_id"] = str(user["_id"])
+    print()
+    print()
+    print(user)
     return jsonify({"user": user})
+
 
 # ---------------------------
 # Account & User Endpoints
@@ -277,9 +314,73 @@ def update_notifications():
 def portfolio():
     if "user_id" not in session:
         return jsonify({"error": "Not logged in"}), 401
-    # Assuming portfolio data is stored in a collection named "portfolios"
-    portfolio_data = list(mongo.db.portfolios.find({"user_id": ObjectId(session["user_id"])}, {"_id": 0}))
-    return jsonify({"portfolio": portfolio_data})
+
+    portfolio_docs = list(mongo.db.portfolios.find({"user_id": ObjectId(session["user_id"])}, {"_id": 0}))
+    
+    portfolio_items = []
+    total_value = 0.0
+    total_profit_loss = 0.0
+
+    for item in portfolio_docs:
+        ticker = item.get("ticker")
+        quantity = item.get("quantity", 0)
+        average_cost = item.get("average_cost", 0.0)
+        company_name = item.get("company_name", ticker)
+        
+        # Fetch current price from stocks collection
+        stock_record = mongo.db.stocks.find_one({"Ticker": ticker}, {"Close": 1})
+        try:
+            current_price = float(stock_record.get("Close")) if stock_record and stock_record.get("Close") is not None else 0.0
+        except (ValueError, TypeError):
+            current_price = 0.0
+
+        # Call the forecast endpoint
+        try:
+            forecast_response = requests.post(
+                "http://localhost:5000/api/model/forecast",
+                json={"ticker": ticker}
+            )
+            if forecast_response.status_code == 200:
+                forecast_data = forecast_response.json()
+                forecast_pct = float(forecast_data.get("percent_change", 0))
+            else:
+                print(f"Forecast endpoint returned {forecast_response.status_code} for {ticker}. Defaulting forecast_pct to 0.")
+                forecast_pct = 0
+        except Exception as e:
+            print("Forecast error for", ticker, ":", str(e))
+            forecast_pct = 0
+
+        # Optionally, if you want new investments not to show an immediate loss, you could clamp forecast_pct:
+        forecast_pct = max(forecast_pct, 0)
+
+        predicted_future_price = current_price * (1 + forecast_pct / 100)
+        profit_loss = (predicted_future_price - average_cost) * quantity
+
+        total_value += current_price * quantity
+        total_profit_loss += profit_loss
+
+        portfolio_item = {
+            "ticker": ticker,
+            "company_name": company_name,
+            "quantity": quantity,
+            "average_cost": round(average_cost, 2),
+            "current_price": round(current_price, 2),
+            "predicted_future_price": round(predicted_future_price, 2),
+            "profit_loss": round(profit_loss, 2)
+        }
+        portfolio_items.append(portfolio_item)
+
+    summary = {
+        "total_value": round(total_value, 2),
+        "total_profit_loss": round(total_profit_loss, 2)
+    }
+
+    return jsonify({
+        "portfolio": portfolio_items,
+        "summary": summary
+    })
+
+
 
 @app.route('/api/constraints', methods=['GET', 'PUT'])
 def constraints():
@@ -310,9 +411,40 @@ def rebalance():
 def transactions():
     if "user_id" not in session:
         return jsonify({"error": "Not logged in"}), 401
-    # Assuming transactions are stored in a collection named "transactions"
-    transactions_data = list(mongo.db.transactions.find({"user_id": ObjectId(session["user_id"])}, {"_id": 0}))
-    return jsonify({"transactions": transactions_data})
+
+    user_id = ObjectId(session["user_id"])
+    txn_cursor = mongo.db.transactions.find({"user_id": user_id})
+    transactions_list = []
+    for t in txn_cursor:
+        # Get current price from stocks collection to compute percent change
+        symbol = t.get("ticker")
+        stock = mongo.db.stocks.find_one({"Ticker": symbol}, {"Close": 1})
+        try:
+            purchase_price = float(t.get("purchasePrice", 0))
+        except (ValueError, TypeError):
+            purchase_price = 0.0
+        try:
+            current_price = float(stock.get("Close")) if stock and stock.get("Close") is not None else purchase_price
+        except (ValueError, TypeError):
+            current_price = purchase_price
+
+        percent_change = ((current_price - purchase_price) / purchase_price * 100) if purchase_price != 0 else 0
+
+        # Format the transaction to match frontend expectations
+        transaction_obj = {
+            "id": str(t["_id"]),
+            "symbol": t.get("ticker"),
+            "name": t.get("ticker"),  # Placeholder: you can enhance this later
+            "type": t.get("transaction_type"),
+            "quantity": t.get("quantity"),
+            "totalPrice": t.get("totalPrice"),
+            "percentChange": percent_change,
+            "date": t.get("timestamp").strftime("%Y-%m-%d %H:%M:%S") if t.get("timestamp") else ""
+        }
+        transactions_list.append(transaction_obj)
+
+    return jsonify({"transactions": transactions_list})
+
 
 # ---------------------------
 # Reports Endpoints

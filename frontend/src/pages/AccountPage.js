@@ -13,7 +13,10 @@ const AccountPage = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/account', { credentials: 'include' })
+    fetch('http://localhost:5000/api/account', {
+      method: 'GET',
+      credentials: 'include',  // Important
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.error) {

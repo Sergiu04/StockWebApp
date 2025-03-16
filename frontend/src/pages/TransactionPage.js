@@ -17,7 +17,8 @@ const TransactionPage = () => {
     const fetchTransactions = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/transactions", {
-          params: filters, // Send filters to the backend
+          params: filters, // Sending filters if needed
+          withCredentials: true,  // Ensure session cookies are sent
         });
         setTransactions(response.data.transactions);
         setFilteredTransactions(response.data.transactions);
@@ -26,8 +27,8 @@ const TransactionPage = () => {
       }
     };
     fetchTransactions();
-  }, [filters]); // Rerun when filters change
-
+  }, [filters]);
+  
   const applyFilters = () => {
     let filtered = [...transactions];
 

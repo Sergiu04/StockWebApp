@@ -9,13 +9,14 @@ const MarketDataPage = () => {
   const [selectedStock, setSelectedStock] = useState(null);
   const [riskInfo, setRiskInfo] = useState('');
   const [purchaseMessage, setPurchaseMessage] = useState('');
+  const [forecastResult, setForecastResult] = useState('');
   const [quantity, setQuantity] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Fetch stocks metadata from backend
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/stocks")
+    fetch("http://localhost:5000/api/stocks")
       .then(res => res.json())
       .then(data => {
         setStocks(data);
@@ -36,15 +37,14 @@ const MarketDataPage = () => {
     setFilteredStocks(filtered);
   }, [searchQuery, stocks]);
 
-  // NEW: Fetch dynamic risk assessment from the backend
+  // Fetch dynamic risk assessment from the backend
   const handleDynamicRiskAssessment = (stock) => {
-    fetch(`http://127.0.0.1:5000/api/model/dynamicRisk?ticker=${stock.Ticker}`)
+    fetch(`http://localhost:5000/api/model/dynamicRisk?ticker=${stock.Ticker}`)
       .then(res => res.json())
       .then(data => {
         if (data.error) {
           setRiskInfo(data.error);
         } else {
-          // Display both the risk class and detailed explanation.
           setRiskInfo(`Risk Class: ${data.risk_class} (${data.overall_risk})\n${data.detailed_explanation}`);
         }
       })
@@ -53,20 +53,50 @@ const MarketDataPage = () => {
         console.error(err);
       });
   };
-  
+
+  // New handler for forecast prediction using the selected stock's ticker.
+  const handleForecastPrediction = () => {
+    fetch("http://localhost:5000/api/model/forecast", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ticker: selectedStock.Ticker })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          setForecastResult(data.error);
+          return;
+        }
+        // data: { predicted_norm, last_norm_close, percent_change }
+        const { predicted_norm, last_norm_close, percent_change } = data;
+        console.log(data)
+        // Display it
+        if (percent_change == null) {
+          setForecastResult("Cannot compute % change (last_norm_close was zero).");
+        } else {
+          const sign = percent_change >= 0 ? "+" : "";
+          setForecastResult(
+            `Predicted Norm: ${predicted_norm.toFixed(11)}
+             Last Norm Close: ${last_norm_close.toFixed(11)}
+             => ${sign}${percent_change.toFixed(2)}% change`
+          );
+        }
+      })
+      .catch(err => {
+        setForecastResult("Forecast failed.");
+        console.error(err);
+      });
+  };
 
   const handlePurchase = (stock) => {
     if (!quantity || Number(quantity) <= 0) {
       setPurchaseMessage("Please enter a valid quantity.");
       return;
     }
-    // Before confirming purchase, ensure the risk information is shown
     if (!riskInfo) {
       setPurchaseMessage("Please view the detailed risk assessment before confirming purchase.");
       return;
     }
-    // Prepare purchase data; assume current price is the stored Close value (with the $ already included)
-    // Remove "$" sign for calculations if necessary.
     const priceNumber = Number(stock.Close.replace(/\$/g, "").replace(/,/g, ""));
     const purchaseData = {
       ticker: stock.Ticker,
@@ -74,11 +104,11 @@ const MarketDataPage = () => {
       price: priceNumber,
       confirm: true
     };
-
-    fetch("http://127.0.0.1:5000/api/purchase", {
+    console.log("purchaseData:", purchaseData);
+    fetch("http://localhost:5000/api/purchase", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include", // if using session/cookies
+      credentials: "include",
       body: JSON.stringify(purchaseData)
     })
       .then(res => res.json())
@@ -115,6 +145,7 @@ const MarketDataPage = () => {
               setSelectedStock(stock); 
               setRiskInfo(''); 
               setPurchaseMessage(''); 
+              setForecastResult('');
               setQuantity('');
             }}
           >
@@ -135,15 +166,35 @@ const MarketDataPage = () => {
           <p>Volume: {selectedStock.Volume.toLocaleString()}</p>
           <p>Sector: {selectedStock.sector}</p>
           <p>Market Cap: ${Number(selectedStock.market_cap).toLocaleString()}</p>
-          <button onClick={() => handleDynamicRiskAssessment(selectedStock)}>
-            Show Detailed Risk Assessment
-          </button>
+          {/* Additional indices from model training */}
+          <p>MA20: {selectedStock.MA20 ? selectedStock.MA20 : "N/A"}</p>
+          <p>Vol20: {selectedStock.Vol20 ? selectedStock.Vol20 : "N/A"}</p>
+          
+          <div style={{ marginTop: "15px" }}>
+            {/* Forecast button */}
+            <button className="forecast-button" onClick={handleForecastPrediction}>
+              Forecast Price Change
+            </button>
+            {/* Enlarged dynamic risk button */}
+            <button className="big-button" onClick={() => handleDynamicRiskAssessment(selectedStock)}>
+              Show Detailed Risk Assessment
+            </button>
+          </div>
+          
+          {forecastResult && (
+            <div className="risk-info">
+              <h3>Forecast Result</h3>
+              <pre>{forecastResult}</pre>
+            </div>
+          )}
+          
           {riskInfo && (
             <div className="risk-info">
               <h3>Risk Assessment</h3>
               <pre>{riskInfo}</pre>
             </div>
           )}
+          
           <div className="purchase-section">
             <h3>Purchase {selectedStock.Ticker}</h3>
             <input
