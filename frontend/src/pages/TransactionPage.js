@@ -17,8 +17,8 @@ const TransactionPage = () => {
     const fetchTransactions = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/transactions", {
-          params: filters, // Sending filters if needed
-          withCredentials: true,  // Ensure session cookies are sent
+          params: filters,
+          withCredentials: true,
         });
         setTransactions(response.data.transactions);
         setFilteredTransactions(response.data.transactions);
@@ -28,7 +28,7 @@ const TransactionPage = () => {
     };
     fetchTransactions();
   }, [filters]);
-  
+
   const applyFilters = () => {
     let filtered = [...transactions];
 
@@ -123,6 +123,7 @@ const TransactionPage = () => {
             <th>Transaction Type</th>
             <th>Quantity</th>
             <th>Total Price</th>
+            <th>Profit/Loss (abs)</th>
             <th>Profit/Loss (%)</th>
             <th>Date</th>
           </tr>
@@ -135,6 +136,13 @@ const TransactionPage = () => {
               <td>{transaction.type}</td>
               <td>{transaction.quantity}</td>
               <td>${transaction.totalPrice.toFixed(2)}</td>
+              <td
+                style={{
+                  color: transaction.profitLoss >= 0 ? "green" : "red",
+                }}
+              >
+                ${transaction.profitLoss.toFixed(2)}
+              </td>
               <td
                 style={{
                   color: transaction.percentChange >= 0 ? "green" : "red",

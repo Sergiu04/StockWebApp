@@ -26,8 +26,7 @@ const ProfilePage = () => {
 
     const handleLogout = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/api/logout', {}, { withCredentials: true });
-            console.log(response);
+            await axios.post('http://localhost:5000/api/logout', {}, { withCredentials: true });
             window.location.href = '/login';
         } catch (err) {
             console.error('Error during logout:', err);

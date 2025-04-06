@@ -68,19 +68,19 @@ const MarketDataPage = () => {
           return;
         }
         // data: { predicted_norm, last_norm_close, percent_change }
-        const { predicted_norm, last_norm_close, percent_change } = data;
-        console.log(data)
-        // Display it
+        const { predicted_close, last_close, percent_change } = data;
+
         if (percent_change == null) {
-          setForecastResult("Cannot compute % change (last_norm_close was zero).");
+          setForecastResult("Cannot compute % change (last_close was zero).");
         } else {
           const sign = percent_change >= 0 ? "+" : "";
           setForecastResult(
-            `Predicted Norm: ${predicted_norm.toFixed(11)}
-             Last Norm Close: ${last_norm_close.toFixed(11)}
-             => ${sign}${percent_change.toFixed(2)}% change`
+            `Predicted Close: ${predicted_close.toFixed(2)}
+            Last Close: ${last_close.toFixed(2)}
+            => ${sign}${(percent_change * 100).toFixed(2)}% change`
           );
         }
+
       })
       .catch(err => {
         setForecastResult("Forecast failed.");
